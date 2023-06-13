@@ -9,6 +9,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const { sequelize } = require("./models");
 const AppRouter = require("./routes");
+const ErrorMid = require("./middlewares/ErrorMid");
 
 // initalize express application
 const app = express();
@@ -33,6 +34,8 @@ app.get("/", (req, res, next) => {
 });
 
 app.use(`${API_BASE_URL}`, AppRouter);
+
+app.use(ErrorMid)
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT} and version ${VERSION}`);
