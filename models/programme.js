@@ -7,8 +7,11 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
+    static associate({ LearnerProgramme }) {
       // define association here
+      this.hasMany(LearnerProgramme, {
+        foreignKey: "programmeId",
+      });
     }
   }
   Programme.init(
@@ -17,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         primaryKey: true,
         type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4
+        defaultValue: DataTypes.UUIDV4,
       },
       title: {
         type: DataTypes.TEXT,
@@ -42,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "programmes",
       timestamps: true,
       createdAt: "dateCreated",
-      updatedAt: 'dateUpdated',
+      updatedAt: "dateUpdated",
     }
   );
   return Programme;
