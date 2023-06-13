@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken");
 
 const Helper = {
-  generateJWT: (payload, secret, expiresIn = nll) => {
-    if (expiresIn) {
-      return jwt.sign(payload, secret, { expiresIn: expiresIn });
+  generateJWT: (payload, secret, expiresIn = undefined) => {
+    if (!expiresIn) {
+      return jwt.sign(payload, secret);
     }
 
-    return jwt.sign(payload, secret);
+    return jwt.sign(payload, secret, { expiresIn: expiresIn });
   },
   verifyJWT: (token, secret) => {
     const claims = jwt.verify(token, secret);

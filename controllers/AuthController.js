@@ -12,6 +12,7 @@ const {
   Programme,
   CertificateAndTraning,
 } = require("../models");
+const { generateJWT } = require("../utils/Helper");
 const { ApiError, ApiResp } = require("../utils/Response");
 const bcryptjs = require("bcryptjs");
 
@@ -47,12 +48,16 @@ const AuthController = {
       }
 
       if (user.userType === "super") {
-        return res.status(200).json(
-          ApiResp("User logged in successfully", "user", {
-            ...user,
-            password: "",
-          })
-        );
+        usr = await User.findOne({
+          where: {
+            id: user.id,
+          },
+          attributes: {
+            exclude: ["password"],
+          },
+          raw: true,
+          nested: true,
+        });
       }
 
       if (user.userType === "employer") {
@@ -69,6 +74,8 @@ const AuthController = {
               as: "filters",
             },
           ],
+          raw: true,
+          nested: true,
         });
       }
 
@@ -121,9 +128,26 @@ const AuthController = {
         });
       }
 
-      return res
-        .status(200)
-        .json(ApiResp("User logged in successfully", "user", usr));
+      const payload = {
+        email: user.email,
+        userType: user.userType,
+      };
+
+      const token = generateJWT(payload, process.env.JWT_ACCESS_KEY, "1h"); // expires in 1 hour
+
+      const refreshToken = generateJWT(
+        payload,
+        process.env.JWT_REFRESH_KEY,
+        "31d"
+      ); // expires in 31 days
+
+      return res.status(200).json(
+        ApiResp("User logged in successfully", "user", {
+          ...usr,
+          token: token,
+          refreshToken: refreshToken,
+        })
+      );
     } catch (e) {
       console.log(e);
       next(e);
@@ -198,6 +222,11 @@ const AuthController = {
       next(e);
     }
   },
+
+  isUserLoggedIn: (req, res, next) => {
+
+  },
+
   resetPasswordUser: (req, res, next) => {
     res.status(200).json({
       success: true,
