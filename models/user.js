@@ -56,7 +56,7 @@ module.exports = (sequelize, DataTypes) => {
 
       this.hasMany(LearnerProgramme, {
         foreignKey: "userId",
-        as: "programmes",
+        as: "studentProgrammes",
       });
 
       this.hasMany(EmployerFilter, {
