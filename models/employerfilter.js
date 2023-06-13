@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ARRAY(DataTypes.JSONB),
       },
       userId: {
-        type: DataTypes.TEXT,
+        type: DataTypes.UUID,
         allowNull: false,
       },
       dateCreated: {
