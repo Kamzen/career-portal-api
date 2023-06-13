@@ -7,8 +7,11 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
+    static associate({ User }) {
       // define association here
+      this.belongsTo(User, {
+        foreignKey: "userId",
+      });
     }
   }
   BasicEducation.init(
@@ -17,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         primaryKey: true,
         type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4
+        defaultValue: DataTypes.UUIDV4,
       },
       grade: {
         type: DataTypes.TEXT,
@@ -33,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       provice: {
         type: DataTypes.TEXT,
-        allowNull: false
+        allowNull: false,
       },
       userId: {
         type: DataTypes.UUID,
