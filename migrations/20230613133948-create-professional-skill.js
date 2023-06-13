@@ -24,7 +24,7 @@ module.exports = {
         allowNull: false,
         type: DataTypes.DATE,
       },
-      dateCreated: {
+      dateUpdated: {
         allowNull: false,
         type: DataTypes.DATE,
       },
