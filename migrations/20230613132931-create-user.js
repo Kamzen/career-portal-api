@@ -19,7 +19,8 @@ module.exports = {
       },
       email: {
         type: DataTypes.TEXT,
-        allowNull: false
+        allowNull: false,
+        unique: true
       },
       password: {
         type: DataTypes.TEXT,
@@ -28,6 +29,9 @@ module.exports = {
       userType: {
         type: DataTypes.TEXT,
         allowNull: false
+      },
+      resetPasswordToken: {
+        type: DataTypes.TEXT
       },
       dateCreated: {
         allowNull: false,
