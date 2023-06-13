@@ -1,4 +1,17 @@
-const { sequelize, User, StudentInformation } = require("../models");
+const {
+  sequelize,
+  User,
+  StudentInformation,
+  Address,
+  BasicEducation,
+  TertiaryEducation,
+  ProfessionalSkill,
+  EmployerFilter,
+  Document,
+  LearnerProgramme,
+  Programme,
+  CertificateAndTraning,
+} = require("../models");
 const { ApiError, ApiResp } = require("../utils/Response");
 const bcryptjs = require("bcryptjs");
 
@@ -10,8 +23,111 @@ const bcryptjs = require("bcryptjs");
  */
 
 const AuthController = {
-  signInUser: (req, res, next) => {
-    const { email, password } = req.body;
+  signInUser: async (req, res, next) => {
+    try {
+      const { email, password } = req.body;
+
+      let usr = null;
+
+      const user = await User.findOne({
+        where: {
+          email: email,
+        },
+        raw: true,
+      });
+
+      if (!user) {
+        throw new ApiError("User email don't exist, please register", 404);
+      }
+
+      const isValid = await bcryptjs.compare(password, user.password);
+
+      if (!isValid) {
+        throw new ApiError("user credentials invalid", 404);
+      }
+
+      if (user.userType === "super") {
+        return res.status(200).json(
+          ApiResp("User logged in successfully", "user", {
+            ...user,
+            password: "",
+          })
+        );
+      }
+
+      if (user.userType === "employer") {
+        usr = await User.findOne({
+          where: {
+            id: user.id,
+          },
+          attributes: {
+            exclude: ["password"],
+          },
+          include: [
+            {
+              model: EmployerFilter,
+              as: "filters",
+            },
+          ],
+        });
+      }
+
+      if (user.userType === "student") {
+        usr = await User.findOne({
+          where: {
+            id: user.id,
+          },
+          attributes: {
+            exclude: ["password"],
+          },
+          include: [
+            {
+              model: StudentInformation,
+              as: "studentInformation",
+            },
+            {
+              model: Address,
+              as: "studentAddress",
+            },
+            {
+              model: BasicEducation,
+              as: "basicEducation",
+            },
+            {
+              model: TertiaryEducation,
+              as: "tertiaryEducation",
+            },
+            {
+              model: ProfessionalSkill,
+              as: "skills",
+            },
+            {
+              model: LearnerProgramme,
+              as: "studentProgrammes",
+              include: [
+                {
+                  model: Programme,
+                  as: "programmes",
+                },
+              ],
+            },
+            {
+              model: CertificateAndTraning,
+              as: "certificates",
+            },
+          ],
+          raw: true,
+          nested: true,
+        });
+      }
+
+      return res
+        .status(200)
+        .json(ApiResp("User logged in successfully", "user", usr));
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
   },
   /**
    * @method signUpUser
