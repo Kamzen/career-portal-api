@@ -25,22 +25,23 @@ module.exports = (sequelize, DataTypes) => {
       identificationNumber: {
         type: DataTypes.TEXT,
         allowNull: false,
+        unique: true
       },
       disbility: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        // allowNull: false,
       },
       careerStatus: {
         type: DataTypes.ARRAY(DataTypes.TEXT),
-        allowNull: false,
+        // allowNull: false,
       },
       mobileNumber: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        // allowNull: false,
       },
       race: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        // allowNull: false,
       },
       userId: {
         type: DataTypes.UUID,
