@@ -7,6 +7,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const cors = require("cors");
+const cookieParser = require('cookie-parser')
 const { sequelize } = require("./models");
 const AppRouter = require("./routes");
 const ErrorMid = require("./middlewares/ErrorMid");
@@ -21,6 +22,7 @@ app.use(morgan("method :url :status :res[content-length] - :response-time ms"));
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser())
 
 const VERSION = process.env.API_VERSION || "v1";
 const API_BASE_URL = `/api/${VERSION}`;
