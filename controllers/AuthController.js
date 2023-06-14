@@ -12,7 +12,12 @@ const {
   Programme,
   CertificateAndTraning
 } = require("../models");
-const { generateJWT } = require("../utils/Helper");
+const {
+  generateJWT,
+  SESSION_COOKIE_OPTIONS,
+  REFRESH_SESSION_COOKIE_OPTIONS,
+  verifyJWT
+} = require("../utils/Helper");
 const { ApiError, ApiResp } = require("../utils/Response");
 const bcryptjs = require("bcryptjs");
 
@@ -129,6 +134,7 @@ const AuthController = {
       }
 
       const payload = {
+        id: user.id,
         email: user.email,
         userType: user.userType
       };
@@ -145,18 +151,17 @@ const AuthController = {
         process.env.COOKIE_ACCESS_TOKEN,
         token,
         SESSION_COOKIE_OPTIONS
-      );
+      ); // expires in 1 hour
       res.cookie(
         process.env.COOKIE_REFRESH_TOKEN,
         refreshToken,
         REFRESH_SESSION_COOKIE_OPTIONS
-      );
+      ); // expires in 31 Days
 
       return res.status(200).json(
         ApiResp("User logged in successfully", "user", {
           ...usr,
-          token: token,
-          refreshToken: refreshToken
+          token: token
         })
       );
     } catch (e) {
@@ -234,7 +239,136 @@ const AuthController = {
     }
   },
 
-  isUserLoggedIn: (req, res, next) => {},
+  isUserLoggedIn: async (req, res, next) => {
+    try {
+      const token = req.cookies[process.env.COOKIE_ACCESS_TOKEN];
+
+      const user = verifyJWT(token, process.env.JWT_ACCESS_KEY);
+
+      let usr = null;
+
+      if (!user) throw new ApiError("User not logged in", 401);
+
+      if (user.userType === "super") {
+        usr = await User.findOne({
+          where: {
+            id: user.id
+          },
+          attributes: {
+            exclude: ["password"]
+          },
+          raw: true,
+          nested: true
+        });
+      }
+
+      if (user.userType === "employer") {
+        usr = await User.findOne({
+          where: {
+            id: user.id
+          },
+          attributes: {
+            exclude: ["password"]
+          },
+          include: [
+            {
+              model: EmployerFilter,
+              as: "filters"
+            }
+          ],
+          raw: true,
+          nested: true
+        });
+      }
+
+      if (user.userType === "student") {
+        usr = await User.findOne({
+          where: {
+            id: user.id
+          },
+          attributes: {
+            exclude: ["password"]
+          },
+          include: [
+            {
+              model: StudentInformation,
+              as: "studentInformation"
+            },
+            {
+              model: Address,
+              as: "studentAddress"
+            },
+            {
+              model: BasicEducation,
+              as: "basicEducation"
+            },
+            {
+              model: TertiaryEducation,
+              as: "tertiaryEducation"
+            },
+            {
+              model: ProfessionalSkill,
+              as: "skills"
+            },
+            {
+              model: LearnerProgramme,
+              as: "studentProgrammes",
+              include: [
+                {
+                  model: Programme,
+                  as: "programmes"
+                }
+              ]
+            },
+            {
+              model: CertificateAndTraning,
+              as: "certificates"
+            }
+          ],
+          raw: true,
+          nested: true
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        user: usr
+      });
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
+  },
+
+  refreshToken: (req, res, next) => {
+    try {
+      const refreshToken = req.cookies[process.env.COOKIE_REFRESH_TOKEN];
+
+      if (!refreshToken) throw new ApiError("User refresh token expired", 401);
+
+      const user = verifyJWT(refreshToken, process.env.JWT_REFRESH_KEY);
+
+      if (!user) throw new ApiError("Invalid user token", 401);
+
+      delete user.iat;
+      delete user.exp;
+
+      const token = generateJWT(user, process.env.JWT_ACCESS_KEY, "1h");
+
+      res.cookie(
+        process.env.COOKIE_ACCESS_TOKEN,
+        token,
+        process.env.COOKIE_ACCESS_TOKEN
+      );
+
+      res
+        .status(200)
+        .json(ApiResp("User token refreshed successfully", "token", token));
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
+  },
 
   resetPasswordUser: (req, res, next) => {
     res.status(200).json({
