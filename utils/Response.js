@@ -6,7 +6,7 @@ class ApiError extends Error {
   }
 }
 
-const ApiResp = (message, key, data) => {
+const ApiResp = (message, key = 'data', data = {}) => {
   return {
     success: true,
     message: message,
