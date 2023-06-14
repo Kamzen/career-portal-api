@@ -10,9 +10,6 @@ const Helper = {
   },
   verifyJWT: (token, secret) => {
     const claims = jwt.verify(token, secret);
-
-    if (!claims) return null;
-
     return claims;
   },
 
