@@ -1,5 +1,5 @@
 const { verifyJWT } = require("../utils/Helper");
-const { ApiError } = require("../utils/Response");
+const { ApiError, ApiResp } = require("../utils/Response");
 
 const AuthMid = (req, res, next) => {
   try {
@@ -29,7 +29,8 @@ const AuthMid = (req, res, next) => {
     next();
   } catch (e) {
     console.log(e);
-    next(e);
+
+    next(new ApiError('User not authorized to access', 401));
   }
 };
 
