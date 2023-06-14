@@ -83,7 +83,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       middleName: {
         type: DataTypes.TEXT,
-        allowNull: false
       },
       email: {
         type: DataTypes.TEXT,
