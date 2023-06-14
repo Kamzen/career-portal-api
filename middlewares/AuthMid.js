@@ -3,7 +3,7 @@ const { ApiError } = require("../utils/Response");
 
 const AuthMid = (req, res, next) => {
   try {
-    const header = req.headers("authorization");
+    const header = req.header("authorization");
 
     if (!header) throw new ApiError("User not authorized to access", 401);
 
@@ -21,7 +21,7 @@ const AuthMid = (req, res, next) => {
       throw new ApiError("User token expired", 401);
     }
 
-    if (usr.msg && usr.msg === "invalid signature") {
+    if (claims.msg && claims.msg === "invalid signature") {
       throw new ApiError("User not authorized to access", 401);
     }
 
