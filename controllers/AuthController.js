@@ -10,7 +10,7 @@ const {
   Document,
   LearnerProgramme,
   Programme,
-  CertificateAndTraning,
+  CertificateAndTraning
 } = require("../models");
 const { generateJWT } = require("../utils/Helper");
 const { ApiError, ApiResp } = require("../utils/Response");
@@ -32,9 +32,9 @@ const AuthController = {
 
       const user = await User.findOne({
         where: {
-          email: email,
+          email: email
         },
-        raw: true,
+        raw: true
       });
 
       if (!user) {
@@ -50,63 +50,63 @@ const AuthController = {
       if (user.userType === "super") {
         usr = await User.findOne({
           where: {
-            id: user.id,
+            id: user.id
           },
           attributes: {
-            exclude: ["password"],
+            exclude: ["password"]
           },
           raw: true,
-          nested: true,
+          nested: true
         });
       }
 
       if (user.userType === "employer") {
         usr = await User.findOne({
           where: {
-            id: user.id,
+            id: user.id
           },
           attributes: {
-            exclude: ["password"],
+            exclude: ["password"]
           },
           include: [
             {
               model: EmployerFilter,
-              as: "filters",
-            },
+              as: "filters"
+            }
           ],
           raw: true,
-          nested: true,
+          nested: true
         });
       }
 
       if (user.userType === "student") {
         usr = await User.findOne({
           where: {
-            id: user.id,
+            id: user.id
           },
           attributes: {
-            exclude: ["password"],
+            exclude: ["password"]
           },
           include: [
             {
               model: StudentInformation,
-              as: "studentInformation",
+              as: "studentInformation"
             },
             {
               model: Address,
-              as: "studentAddress",
+              as: "studentAddress"
             },
             {
               model: BasicEducation,
-              as: "basicEducation",
+              as: "basicEducation"
             },
             {
               model: TertiaryEducation,
-              as: "tertiaryEducation",
+              as: "tertiaryEducation"
             },
             {
               model: ProfessionalSkill,
-              as: "skills",
+              as: "skills"
             },
             {
               model: LearnerProgramme,
@@ -114,23 +114,23 @@ const AuthController = {
               include: [
                 {
                   model: Programme,
-                  as: "programmes",
-                },
-              ],
+                  as: "programmes"
+                }
+              ]
             },
             {
               model: CertificateAndTraning,
-              as: "certificates",
-            },
+              as: "certificates"
+            }
           ],
           raw: true,
-          nested: true,
+          nested: true
         });
       }
 
       const payload = {
         email: user.email,
-        userType: user.userType,
+        userType: user.userType
       };
 
       const token = generateJWT(payload, process.env.JWT_ACCESS_KEY, "1h"); // expires in 1 hour
@@ -141,11 +141,22 @@ const AuthController = {
         "31d"
       ); // expires in 31 days
 
+      res.cookie(
+        process.env.COOKIE_ACCESS_TOKEN,
+        token,
+        SESSION_COOKIE_OPTIONS
+      );
+      res.cookie(
+        process.env.COOKIE_REFRESH_TOKEN,
+        refreshToken,
+        REFRESH_SESSION_COOKIE_OPTIONS
+      );
+
       return res.status(200).json(
         ApiResp("User logged in successfully", "user", {
           ...usr,
           token: token,
-          refreshToken: refreshToken,
+          refreshToken: refreshToken
         })
       );
     } catch (e) {
@@ -175,8 +186,8 @@ const AuthController = {
       // check if email exist
       const user = await User.findOne({
         where: {
-          email: req.body.email,
-        },
+          email: req.body.email
+        }
       });
 
       if (user) {
@@ -186,8 +197,8 @@ const AuthController = {
       // check if Id number already registered
       const id = await StudentInformation.findOne({
         where: {
-          identificationNumber: req.body.identificationNumber,
-        },
+          identificationNumber: req.body.identificationNumber
+        }
       });
 
       if (id) {
@@ -223,16 +234,14 @@ const AuthController = {
     }
   },
 
-  isUserLoggedIn: (req, res, next) => {
-
-  },
+  isUserLoggedIn: (req, res, next) => {},
 
   resetPasswordUser: (req, res, next) => {
     res.status(200).json({
       success: true,
-      message: "Reset Password User",
+      message: "Reset Password User"
     });
-  },
+  }
 };
 
 module.exports = AuthController;
