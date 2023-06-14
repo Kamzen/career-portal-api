@@ -33,8 +33,6 @@ const AuthController = {
     try {
       const { email, password } = req.body;
 
-      let usr = null;
-
       const user = await User.findOne({
         where: {
           email: email
@@ -50,87 +48,6 @@ const AuthController = {
 
       if (!isValid) {
         throw new ApiError("user credentials invalid", 404);
-      }
-
-      if (user.userType === "super") {
-        usr = await User.findOne({
-          where: {
-            id: user.id
-          },
-          attributes: {
-            exclude: ["password"]
-          },
-          raw: true,
-          nested: true
-        });
-      }
-
-      if (user.userType === "employer") {
-        usr = await User.findOne({
-          where: {
-            id: user.id
-          },
-          attributes: {
-            exclude: ["password"]
-          },
-          include: [
-            {
-              model: EmployerFilter,
-              as: "filters"
-            }
-          ],
-          raw: true,
-          nested: true
-        });
-      }
-
-      if (user.userType === "student") {
-        usr = await User.findOne({
-          where: {
-            id: user.id
-          },
-          attributes: {
-            exclude: ["password"]
-          },
-          include: [
-            {
-              model: StudentInformation,
-              as: "studentInformation"
-            },
-            {
-              model: Address,
-              as: "studentAddress"
-            },
-            {
-              model: BasicEducation,
-              as: "basicEducation"
-            },
-            {
-              model: TertiaryEducation,
-              as: "tertiaryEducation"
-            },
-            {
-              model: ProfessionalSkill,
-              as: "skills"
-            },
-            {
-              model: LearnerProgramme,
-              as: "studentProgrammes",
-              include: [
-                {
-                  model: Programme,
-                  as: "programmes"
-                }
-              ]
-            },
-            {
-              model: CertificateAndTraning,
-              as: "certificates"
-            }
-          ],
-          raw: true,
-          nested: true
-        });
       }
 
       const payload = {
@@ -160,7 +77,6 @@ const AuthController = {
 
       return res.status(200).json(
         ApiResp("User logged in successfully", "user", {
-          ...usr,
           token: token
         })
       );
@@ -241,13 +157,9 @@ const AuthController = {
 
   isUserLoggedIn: async (req, res, next) => {
     try {
-      const token = req.cookies[process.env.COOKIE_ACCESS_TOKEN];
-
-      const user = verifyJWT(token, process.env.JWT_ACCESS_KEY);
+      const user = req.user;
 
       let usr = null;
-
-      if (!user) throw new ApiError("User not logged in", 401);
 
       if (user.userType === "super") {
         usr = await User.findOne({
@@ -275,9 +187,7 @@ const AuthController = {
               model: EmployerFilter,
               as: "filters"
             }
-          ],
-          raw: true,
-          nested: true
+          ]
         });
       }
 
@@ -324,9 +234,7 @@ const AuthController = {
               model: CertificateAndTraning,
               as: "certificates"
             }
-          ],
-          raw: true,
-          nested: true
+          ]
         });
       }
 
