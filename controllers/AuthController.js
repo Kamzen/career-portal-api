@@ -33,22 +33,14 @@ const AuthController = {
     try {
       const { email, password } = req.body;
 
-      const user = await User.findOne({
-        where: {
-          email: email
-        },
-        raw: true
-      });
+      const user = await User.findOne({ where: { email: email }, raw: true });
 
-      if (!user) {
+      if (!user)
         throw new ApiError("User email don't exist, please register", 404);
-      }
 
       const isValid = await bcryptjs.compare(password, user.password);
 
-      if (!isValid) {
-        throw new ApiError("user credentials invalid", 404);
-      }
+      if (!isValid) throw new ApiError("user credentials invalid", 404);
 
       const payload = {
         id: user.id,
@@ -63,17 +55,6 @@ const AuthController = {
         process.env.JWT_REFRESH_KEY,
         "31d"
       ); // expires in 31 days
-
-      res.cookie(
-        process.env.COOKIE_ACCESS_TOKEN,
-        token,
-        SESSION_COOKIE_OPTIONS
-      ); // expires in 1 hour
-      res.cookie(
-        process.env.COOKIE_REFRESH_TOKEN,
-        refreshToken,
-        REFRESH_SESSION_COOKIE_OPTIONS
-      ); // expires in 31 Days
 
       return res.status(200).json(
         ApiResp("User logged in successfully", "user", {
@@ -96,9 +77,7 @@ const AuthController = {
     const t = await sequelize.transaction();
 
     try {
-      if (req.body?.email === "") {
-        throw new ApiError("Email is required", 422);
-      }
+      if (req.body?.email === "") throw new ApiError("Email is required", 422);
 
       if (req.body?.identificationNumber === "") {
         throw new ApiError("Identification number required", 422);
@@ -143,14 +122,14 @@ const AuthController = {
         { transaction: t }
       );
 
-      t.commit();
+      await t.commit();
 
       return res
         .status(201)
         .json(ApiResp("User created successfully", "user", usr));
     } catch (e) {
       console.log(e);
-      t.rollback();
+      await t.rollback();
       next(e);
     }
   },
