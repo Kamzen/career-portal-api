@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
+      institution: {
+        type: DataTypes.TEXT,
+        allowNull: false
+      },
       startYear: {
         type: DataTypes.TEXT,
         allowNull: false,
@@ -44,6 +48,9 @@ module.exports = (sequelize, DataTypes) => {
       userId: {
         type: DataTypes.UUID,
         allowNull: false,
+      },
+      completed:{
+        type: DataTypes.BOOLEAN,
       },
       dateCreated: {
         allowNull: false,
