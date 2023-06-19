@@ -6,27 +6,27 @@ module.exports = {
       id: {
         allowNull: false,
         primaryKey: true,
-        type: DataTypes.UUID,
+        type: DataTypes.UUID
       },
       title: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: false
       },
       description: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: false
       },
       dateCreated: {
         allowNull: false,
-        type: DataTypes.DATE,
+        type: DataTypes.DATE
       },
       dateUpdated: {
         allowNull: false,
-        type: DataTypes.DATE,
-      },
+        type: DataTypes.DATE
+      }
     });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("programmes");
-  },
+  }
 };
