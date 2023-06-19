@@ -20,7 +20,7 @@ module.exports = {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      provice: {
+      province: {
         type: DataTypes.TEXT,
         allowNull: false,
       },
