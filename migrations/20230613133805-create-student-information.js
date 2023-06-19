@@ -18,7 +18,7 @@ module.exports = {
         // allowNull: false,
       },
       careerStatus: {
-        type: DataTypes.ARRAY(DataTypes.TEXT),
+        type: DataTypes.TEXT
         // allowNull: false,
       },
       mobileNumber: {
