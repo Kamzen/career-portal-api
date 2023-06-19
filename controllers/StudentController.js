@@ -5,7 +5,8 @@ const {
   User, 
   StudentInformation, 
   BasicEducation,
-  TertiaryEducation 
+  TertiaryEducation,
+  ProfessionalSkill 
 } = require("../models");
 const { ApiError, ApiResp } = require("../utils/Response");
 
@@ -166,6 +167,50 @@ const StudentController = {
       await tertiaryEducation.update({ ...req.body });
 
       return res.status(200).json(ApiResp('Tertiary education info updated successfully'));
+
+
+    }catch(e){
+
+      console.log(e)
+      next(e)
+
+    }
+
+  },
+
+  addProfessionalSkill: async (req, res, next) => {
+
+    try{
+
+      const professionalSkill = await ProfessionalSkill.create({ ...req.body });
+
+      if(!professionalSkill) throw new ApiError('Error saving professional skill', 404);
+
+      return res.status(201).json(ApiResp('Professional skill saved successfully'));
+
+
+    }catch(e){
+
+      console.log(e)
+      next(e)
+
+    }
+
+  },
+
+  editProfessionalSkill: async (req, res, next) => {
+
+    try{
+
+      const { professionalSkillId } = req.params;
+
+      const professionalSkill = await ProfessionalSkill.findOne({ where: { id: professionalSkillId } });
+
+      if(!professionalSkill) throw new ApiError('Error updating professional skill', 404);
+
+      await professionalSkill.update({ ...req.body });
+
+      return res.status(200).json(ApiResp('Professional skill update successfully'));
 
 
     }catch(e){
