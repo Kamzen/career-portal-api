@@ -97,9 +97,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      resetPasswordToken: {
-        type: DataTypes.TEXT
-      },
       dateCreated: {
         allowNull: false,
         type: DataTypes.DATE,
