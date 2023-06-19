@@ -42,6 +42,9 @@ module.exports = {
         type: DataTypes.UUID,
         allowNull: false,
       },
+      completed:{
+        type: DataTypes.BOOLEAN,
+      },
       dateCreated: {
         allowNull: false,
         type: DataTypes.DATE,
