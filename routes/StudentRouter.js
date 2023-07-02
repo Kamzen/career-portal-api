@@ -14,6 +14,4 @@ StudentRouter.put('/editTertiaryEducation/:tertiaryEducationId', AuthMid, Studen
 StudentRouter.post('/addProfessionalSkill', AuthMid, StudentController.addProfessionalSkill);
 StudentRouter.put('/editProfessionalSkill/:professionalSkillId', AuthMid, StudentController.editProfessionalSkill);
 
-
-
 module.exports = StudentRouter;
