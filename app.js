@@ -26,7 +26,7 @@ app.use(cookieParser())
 
 const VERSION = process.env.API_VERSION || "v1";
 const API_BASE_URL = `/api/${VERSION}`;
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
 app.get("/", (req, res, next) => {
   return res.status(200).json({
