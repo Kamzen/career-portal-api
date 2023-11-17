@@ -11,6 +11,7 @@ StudentRouter.post('/addBasicEducation', AuthMid, StudentController.addBasicEduc
 StudentRouter.put('/editBasicEducation/:basicEducationId', AuthMid, StudentController.editBasicEducation);
 StudentRouter.post('/addTertiaryEducation', AuthMid, StudentController.addTertiaryEducation);
 StudentRouter.put('/editTertiaryEducation/:tertiaryEducationId', AuthMid, StudentController.editTertiaryEducation);
+StudentRouter.delete('/deleteTertiaryEducation/:tertiaryEducationId', AuthMid, StudentController.deleteTertiaryEducation);
 StudentRouter.post('/addProfessionalSkill', AuthMid, StudentController.addProfessionalSkill);
 StudentRouter.put('/editProfessionalSkill/:professionalSkillId', AuthMid, StudentController.editProfessionalSkill);
 
