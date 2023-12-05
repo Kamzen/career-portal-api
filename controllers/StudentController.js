@@ -122,10 +122,7 @@ const StudentController = {
 
   addTertiaryEducation: async (req, res, next) => {
     try {
-      const tertiaryEducation = await TertiaryEducation.create({ ...req.body });
-
-      if (!tertiaryEducation)
-        throw new ApiError("Error saving tertiary education info", 404);
+      await TertiaryEducation.create(req.body);
 
       return res
         .status(201)
