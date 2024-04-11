@@ -122,7 +122,7 @@ const StudentController = {
 
   addTertiaryEducation: async (req, res, next) => {
     try {
-      await TertiaryEducation.create(req.body);
+      await TertiaryEducation.create({...req.body});
 
       return res
         .status(201)
