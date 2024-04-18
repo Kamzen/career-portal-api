@@ -6,31 +6,34 @@ module.exports = {
       id: {
         allowNull: false,
         primaryKey: true,
-        type: DataTypes.UUID,
+        type: DataTypes.UUID
       },
       course: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: false
       },
       year: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: false
+      },
+      certificateFileName: {
+        type: DataTypes.TEXT
       },
       userId: {
         type: DataTypes.UUID,
-        allowNull: false,
+        allowNull: false
       },
       dateCreated: {
         allowNull: false,
-        type: DataTypes.DATE,
+        type: DataTypes.DATE
       },
       dateUpdated: {
         allowNull: false,
-        type: DataTypes.DATE,
-      },
+        type: DataTypes.DATE
+      }
     });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("certificateAndTranings");
-  },
+  }
 };
