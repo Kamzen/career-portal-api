@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate({ User }) {
       // define association here
       this.belongsTo(User, {
-        foreignKey: "userId",
+        foreignKey: "userId"
       });
     }
   }
@@ -20,28 +20,31 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         primaryKey: true,
         type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
+        defaultValue: DataTypes.UUIDV4
       },
       course: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: false
       },
       year: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: false
+      },
+      certificateFileName: {
+        type: DataTypes.TEXT
       },
       userId: {
         type: DataTypes.UUID,
-        allowNull: false,
+        allowNull: false
       },
       dateCreated: {
         allowNull: false,
-        type: DataTypes.DATE,
+        type: DataTypes.DATE
       },
       dateUpdated: {
         allowNull: false,
-        type: DataTypes.DATE,
-      },
+        type: DataTypes.DATE
+      }
     },
     {
       sequelize,
@@ -49,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "certificateAndTranings",
       timestamps: true,
       createdAt: "dateCreated",
-      updatedAt: "dateUpdated",
+      updatedAt: "dateUpdated"
     }
   );
   return CertificateAndTraning;
