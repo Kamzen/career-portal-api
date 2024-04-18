@@ -6,7 +6,8 @@ const {
   StudentInformation,
   BasicEducation,
   TertiaryEducation,
-  ProfessionalSkill
+  ProfessionalSkill,
+  CertificateAndTraning
 } = require("../models");
 const { ApiError, ApiResp } = require("../utils/Response");
 
@@ -122,7 +123,7 @@ const StudentController = {
 
   addTertiaryEducation: async (req, res, next) => {
     try {
-      await TertiaryEducation.create({...req.body});
+      await TertiaryEducation.create({ ...req.body });
 
       return res
         .status(201)
@@ -204,7 +205,61 @@ const StudentController = {
       console.log(e);
       next(e);
     }
-  }
+  },
+
+  deleteProfessionalSkill: async (req, res, next) => {
+    try {
+      const { professionalSkillId } = req.params;
+
+      await ProfessionalSkill.destroy({ where: { id: professionalSkillId } });
+
+      return res
+        .status(200)
+        .json(ApiResp("Professional skill deleted successfully"));
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
+  },
+
+  addCertification: async (req, res, next) => {
+    try {
+      const files = req.files;
+
+      let certificateFile = "";
+
+      if (files) {
+        console.log(files)
+        certificateFile = files.certificateFile;
+        console.log(certificateFile)
+        certificateFile.mv(
+          `${process.env.STUDENT_DOC_FOLDER}/${certificateFile.name}`
+        );
+      }
+
+      await CertificateAndTraning.create({
+        ...req.body,
+        certificateFileName: certificateFile.name
+      });
+
+      return res.status(201).json(ApiResp("Certificate added successfully"));
+    } catch (e) {
+      console.log(e);
+    }
+  },
+
+  // getAllCertification: async (req, res, next) => {
+  //   try {
+  //     const certificates = await CertificateAndTraning.findAll();
+
+  //     return res
+  //       .status(200)
+  //       .json(ApiResp("Certificates fetched", "certificates", certificates));
+  //   } catch (e) {
+  //     console.log(e);
+  //     next(e);
+  //   }
+  // }
 };
 
 module.exports = StudentController;
