@@ -14,5 +14,7 @@ StudentRouter.put('/editTertiaryEducation/:tertiaryEducationId', AuthMid, Studen
 StudentRouter.delete('/deleteTertiaryEducation/:tertiaryEducationId', AuthMid, StudentController.deleteTertiaryEducation);
 StudentRouter.post('/addProfessionalSkill', AuthMid, StudentController.addProfessionalSkill);
 StudentRouter.put('/editProfessionalSkill/:professionalSkillId', AuthMid, StudentController.editProfessionalSkill);
+StudentRouter.delete('/deleteProfessionalSkill/:professionalSkillId', AuthMid, StudentController.deleteProfessionalSkill);
+StudentRouter.post('/addCertification', AuthMid, StudentController.addCertification);
 
 module.exports = StudentRouter;
