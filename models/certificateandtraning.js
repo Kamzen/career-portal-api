@@ -30,6 +30,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false
       },
+      originalFileName: {
+        type: DataTypes.TEXT
+      },
       certificateFileName: {
         type: DataTypes.TEXT
       },
