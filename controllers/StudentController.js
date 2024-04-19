@@ -228,11 +228,12 @@ const StudentController = {
       const files = req.files;
 
       let certificateFile = "";
+      let certificateNewFile = "";
 
       if (files) {
         certificateFile = files.certificateFile;
         const fileExt = certificateFile.name.split(".")[1];
-        const certificateNewFile = `${uuid()}.${fileExt}`;
+        certificateNewFile = `${uuid()}.${fileExt}`;
         certificateFile.mv(
           `${process.env.STUDENT_DOC_FOLDER}/${certificateNewFile}`
         );
@@ -240,7 +241,8 @@ const StudentController = {
 
       await CertificateAndTraning.create({
         ...req.body,
-        certificateFileName: certificateFile.name
+        certificateFileName: certificateNewFile,
+        originalFileName: certificateFile.name
       });
 
       return res.status(201).json(ApiResp("Certificate added successfully"));
@@ -250,8 +252,9 @@ const StudentController = {
   },
 
   editCertification: async (req, res, next) => {
+    console.log(req.body);
     try {
-      const { certificateId } = req.params;
+      const { certificateId } = req.body;
 
       const certificate = await CertificateAndTraning.findOne({
         where: { id: certificateId }
@@ -263,19 +266,27 @@ const StudentController = {
       const files = req.files;
 
       let certificateFile = "";
+      let certificateNewFile = "";
+      let originalFileName = "";
 
       if (files) {
         certificateFile = files.certificateFile;
         const fileExt = certificateFile.name.split(".")[1];
-        const certificateNewFile = `${uuid()}.${fileExt}`;
+        certificateNewFile = `${uuid()}.${fileExt}`;
+        originalFileName = certificateNewFile.name;
         certificateFile.mv(
           `${process.env.STUDENT_DOC_FOLDER}/${certificateNewFile}`
         );
       } else {
-        certificateFile = req.body.certificateFile;
+        certificateNewFile = req.body.certificateFile;
+        certificateFile = req.body.originalFileName;
       }
 
-      await certificate.update({ ...req.body });
+      await certificate.update({
+        ...req.body,
+        certificateFileName: certificateNewFile,
+        originalFileName: originalFileName
+      });
 
       return res.status(200).json(ApiResp("Certificate updated successfully"));
     } catch (e) {
@@ -294,6 +305,21 @@ const StudentController = {
     } catch (e) {
       console.log(e);
       next(e);
+    }
+  },
+
+  downloadCertificate: async (req, res, next) => {
+    try {
+      const { filename } = req.query;
+      const filePath = `${process.env.STUDENT_DOC_FOLDER}/${filename}`;
+
+      return res.download(filePath);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        success: false,
+        message: "Error happened"
+      });
     }
   }
 
