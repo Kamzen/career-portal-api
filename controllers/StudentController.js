@@ -10,6 +10,7 @@ const {
   CertificateAndTraning
 } = require("../models");
 const { ApiError, ApiResp } = require("../utils/Response");
+const { v4: uuid } = require("uuid");
 
 const StudentController = {
   editStudentBasicInformation: async (req, res, next) => {
@@ -229,11 +230,11 @@ const StudentController = {
       let certificateFile = "";
 
       if (files) {
-        console.log(files)
         certificateFile = files.certificateFile;
-        console.log(certificateFile)
+        const fileExt = certificateFile.name.split(".")[1];
+        const certificateNewFile = `${uuid()}.${fileExt}`;
         certificateFile.mv(
-          `${process.env.STUDENT_DOC_FOLDER}/${certificateFile.name}`
+          `${process.env.STUDENT_DOC_FOLDER}/${certificateNewFile}`
         );
       }
 
@@ -247,6 +248,54 @@ const StudentController = {
       console.log(e);
     }
   },
+
+  editCertification: async (req, res, next) => {
+    try {
+      const { certificateId } = req.params;
+
+      const certificate = await CertificateAndTraning.findOne({
+        where: { id: certificateId }
+      });
+
+      if (!certificate)
+        throw new ApiError("Error updating certificate information", 404);
+
+      const files = req.files;
+
+      let certificateFile = "";
+
+      if (files) {
+        certificateFile = files.certificateFile;
+        const fileExt = certificateFile.name.split(".")[1];
+        const certificateNewFile = `${uuid()}.${fileExt}`;
+        certificateFile.mv(
+          `${process.env.STUDENT_DOC_FOLDER}/${certificateNewFile}`
+        );
+      } else {
+        certificateFile = req.body.certificateFile;
+      }
+
+      await certificate.update({ ...req.body });
+
+      return res.status(200).json(ApiResp("Certificate updated successfully"));
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
+  },
+
+  deleteCertification: async (req, res, next) => {
+    try {
+      const { certificateId } = req.params;
+
+      await CertificateAndTraning.destroy({ where: { id: certificateId } });
+
+      return res.status(200).json(ApiResp("Certificate deleted successfully"));
+    } catch (e) {
+      console.log(e);
+      next(e);
+    }
+  }
 
   // getAllCertification: async (req, res, next) => {
   //   try {
