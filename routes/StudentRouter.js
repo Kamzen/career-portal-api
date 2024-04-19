@@ -16,5 +16,7 @@ StudentRouter.post('/addProfessionalSkill', AuthMid, StudentController.addProfes
 StudentRouter.put('/editProfessionalSkill/:professionalSkillId', AuthMid, StudentController.editProfessionalSkill);
 StudentRouter.delete('/deleteProfessionalSkill/:professionalSkillId', AuthMid, StudentController.deleteProfessionalSkill);
 StudentRouter.post('/addCertification', AuthMid, StudentController.addCertification);
+StudentRouter.put('/editCertificate/:certificatedId', AuthMid, StudentController.editCertification);
+StudentRouter.delete('/deleteCertificate/:certificateId', AuthMid, StudentController.deleteCertification);
 
 module.exports = StudentRouter;
