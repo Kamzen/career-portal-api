@@ -12,6 +12,7 @@ const fileUpload = require("express-fileupload");
 const { sequelize } = require("./models");
 const AppRouter = require("./routes");
 const ErrorMid = require("./middlewares/ErrorMid");
+const path = require("path");
 
 // initalize express application
 const app = express();
@@ -19,6 +20,7 @@ const app = express();
 dotenv.config({ path: `${__dirname}/config/config.env` });
 
 // middlewares
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(morgan("method :url :status :res[content-length] - :response-time ms"));
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
